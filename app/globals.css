@@ -1,0 +1,17 @@
+@import '../css/vars.css';
+@import '../css/base.css';
+@import '../css/desk.css';
+@import '../css/tray.css';
+@import '../css/modal.css';
+@import '../css/stage2.css';
+@import '../css/animations.css';
+
+:root {
+  --font-display: var(--font-fraunces);
+  --font-ui: var(--font-albert);
+  --font-hand: var(--font-caveat);
+}
+
+body {
+  margin: 0;
+}
