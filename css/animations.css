@@ -1,0 +1,28 @@
+/* ── ANIMATIONS ────────────────────────────────────────── */
+
+/* Item drop onto desk */
+@keyframes itemDrop {
+  0%   { opacity: 0; transform: rotate(var(--r)) scale(0.75) translateY(-24px); }
+  60%  { transform: rotate(var(--r)) scale(1.03) translateY(4px); }
+  100% { opacity: 1; transform: rotate(var(--r)) scale(1) translateY(0); }
+}
+.item.dropping { animation: itemDrop 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+/* Stage 2 plan blocks stagger in */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.plan-row {
+  opacity: 0;
+  animation: slideUp 0.3s ease forwards;
+}
+
+/* Archetype panel reveal */
+@keyframes archReveal {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#archetype-panel {
+  animation: archReveal 0.4s ease 0.1s both;
+}
