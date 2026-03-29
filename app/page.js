@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRef, useState } from 'react';
 
 const PRESET_CHIPS = [
@@ -134,6 +135,10 @@ export default function HomePage() {
       <svg className="noise-overlay" xmlns="http://www.w3.org/2000/svg"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" /></filter><rect width="100%" height="100%" filter="url(#grain)" /></svg>
       <div id="app">
         <div id="s1" style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+          <div style={{ display: 'flex', gap: 8, padding: '10px 16px 0' }}>
+            <Link href="/onboarding" style={{ fontSize: 12, padding: '6px 10px', borderRadius: 999, textDecoration: 'none', background: '#eef4ff', color: '#355699', fontWeight: 600 }}>New here? Onboarding</Link>
+            <Link href="/reference-board" style={{ fontSize: 12, padding: '6px 10px', borderRadius: 999, textDecoration: 'none', background: '#fff2eb', color: '#9b4f2b', fontWeight: 600 }}>Reference Board</Link>
+          </div>
           <div id="desk" ref={deskRef}>
             {items.length === 0 && <div className="empty-hint" id="hint"><span className="hint-txt">Your desk is empty.<br />Add a block below ↓</span></div>}
             {items.map((item) => (
