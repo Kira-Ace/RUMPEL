@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Edit3 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Edit3, Trash2 } from 'lucide-react';
 import TopBar from '../common/TopBar.jsx';
 import { TODAY, MONTHS, DAYS } from '../../utils/constants.js';
 import { 
@@ -16,6 +16,7 @@ export default function CalendarScreen({ tasks, setTasks }) {
   const [view, setView] = useState({y:TODAY.y, m:TODAY.m});
   const [expanded, setExpanded] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [newTask, setNewTask] = useState({title:"", time:"", desc:"", tag:"Other"});
   const [pillY, setPillY] = useState(null);
   const [pillDelta, setPillDelta] = useState(0);
@@ -54,12 +55,36 @@ export default function CalendarScreen({ tasks, setTasks }) {
   
   const addTask = () => {
     if(!newTask.title) return;
-    setTasks(p => ({
-      ...p, 
-      [taskKey]: [...(p[taskKey] || []), {...newTask, id:Date.now()}]
-    }));
+    
+    if(editingId) {
+      // Update existing task
+      setTasks(p => ({
+        ...p, 
+        [taskKey]: p[taskKey].map(t => t.id === editingId ? {...newTask, id:editingId} : t)
+      }));
+      setEditingId(null);
+    } else {
+      // Add new task
+      setTasks(p => ({
+        ...p, 
+        [taskKey]: [...(p[taskKey] || []), {...newTask, id:Date.now()}]
+      }));
+    }
     setNewTask({title:"", time:"", desc:"", tag:"Other"}); 
     setShowModal(false);
+  };
+
+  const deleteTask = (taskId) => {
+    setTasks(p => ({
+      ...p,
+      [taskKey]: p[taskKey].filter(t => t.id !== taskId)
+    }));
+  };
+
+  const startEdit = (task) => {
+    setNewTask(task);
+    setEditingId(task.id);
+    setShowModal(true);
   };
 
   const grid = buildMonthGrid(view.y, view.m);
@@ -209,8 +234,14 @@ export default function CalendarScreen({ tasks, setTasks }) {
             <div key={t.id} className={`task-card ${i === 1 ? "accent" : ""}`}>
               <div className="task-time">
                 <span>{t.time}</span>
-                {i === 1 && <Edit3 size={16} style={{color:"var(--brown-m)"}}/>}
-                {i !== 1 && <div style={{width:8, height:8, borderRadius:"50%", background:"var(--brown-m)", opacity:.4}}/>}
+                <div style={{display:"flex", gap:6}}>
+                  <button onClick={() => startEdit(t)} style={{background:"none", border:"none", cursor:"pointer", padding:0, display:"flex", alignItems:"center", justifyContent:"center"}}>
+                    <Edit3 size={16} style={{color:"var(--brown-m)"}}/>
+                  </button>
+                  <button onClick={() => deleteTask(t.id)} style={{background:"none", border:"none", cursor:"pointer", padding:0, display:"flex", alignItems:"center", justifyContent:"center"}}>
+                    <Trash2 size={16} style={{color:"var(--outline)", opacity:0.6}}/>
+                  </button>
+                </div>
               </div>
               <div className="task-title">{t.title}</div>
               {t.desc && <div className="task-desc">{t.desc}</div>}
@@ -219,7 +250,7 @@ export default function CalendarScreen({ tasks, setTasks }) {
               </div>
             </div>
           ))}
-          <button className="add-task-btn" onClick={() => setShowModal(true)}>
+          <button className="add-task-btn" onClick={() => {setEditingId(null); setNewTask({title:"", time:"", desc:"", tag:"Other"}); setShowModal(true);}}>
             <Plus size={15}/> Add task
           </button>
         </div>
@@ -229,7 +260,7 @@ export default function CalendarScreen({ tasks, setTasks }) {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setShowModal(false)}>
           <div className="modal-sheet">
             <div className="modal-handle"/>
-            <div className="modal-title">New Task — {dowName(sel)} {MONTHS[sel.m].slice(0,3)} {sel.d}</div>
+            <div className="modal-title">{editingId ? "Edit Task" : "New Task"} — {dowName(sel)} {MONTHS[sel.m].slice(0,3)} {sel.d}</div>
             <input className="modal-input" placeholder="Task title…" value={newTask.title} onChange={e => setNewTask(p => ({...p, title:e.target.value}))}/>
             <input className="modal-input" placeholder="Time (e.g. 14:00)" value={newTask.time} onChange={e => setNewTask(p => ({...p, time:e.target.value}))}/>
             <input className="modal-input" placeholder="Description (optional)" value={newTask.desc} onChange={e => setNewTask(p => ({...p, desc:e.target.value}))}/>
@@ -238,7 +269,7 @@ export default function CalendarScreen({ tasks, setTasks }) {
             </select>
             <div className="modal-btns">
               <button className="modal-btn secondary" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="modal-btn primary" onClick={addTask}>Add Task</button>
+              <button className="modal-btn primary" onClick={addTask}>{editingId ? "Save" : "Add"} Task</button>
             </div>
           </div>
         </div>

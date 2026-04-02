@@ -1,16 +1,20 @@
 import { BookMarked, Edit3, Hash, CheckCircle2, Flame, Timer } from 'lucide-react';
+import { useState } from 'react';
 import TopBar from '../common/TopBar.jsx';
 import Greeting from '../common/Greeting.jsx';
+import FocusTimer from '../common/FocusTimer.jsx';
 import { TODAY, initialTasks } from '../../utils/constants.js';
 import { formatDateKey } from '../../utils/dateUtils.js';
 
 export default function HomeScreen({ tasks }) {
+  const [showTimer, setShowTimer] = useState(false);
   const todayTasks = tasks[formatDateKey(TODAY.y, TODAY.m, TODAY.d)] || [];
   const taskIcons = [BookMarked, Edit3, Hash];
 
   return (
     <>
       <TopBar/>
+      <FocusTimer isOpen={showTimer} onClose={() => setShowTimer(false)} />
       <div className="scroll-content">
         <div className="home-wrap">
           <Greeting userName="Rumpel" />
@@ -37,7 +41,7 @@ export default function HomeScreen({ tasks }) {
                 </div>
               );
             })}
-            <button className="focus-cta"><Timer size={16}/> Start Focus Timer</button>
+            <button className="focus-cta" onClick={() => setShowTimer(true)}><Timer size={16}/> Start Focus Timer</button>
           </div>
 
           {/* Stats */}
