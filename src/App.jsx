@@ -6,7 +6,7 @@ import ChatModal from './components/common/ChatModal.jsx';
 import SplashScreen from './components/screens/SplashScreen.jsx';
 import HomeScreen from './components/screens/HomeScreen.jsx';
 import CalendarScreen from './components/screens/CalendarScreen.jsx';
-import NotesScreen from './components/screens/NotesScreen.jsx';
+import PlannerScreen from './components/screens/PlannerScreen.jsx';
 import SettingsScreen from './components/screens/SettingsScreen.jsx';
 import { initialTasks, TODAY } from './utils/constants.js';
 import { addDays, formatDateKey } from './utils/dateUtils.js';
@@ -107,8 +107,8 @@ export default function App() {
               <div className={`screen ${tab === "calendar" ? "" : "hidden"}`}>
                 <CalendarScreen tasks={tasks} setTasks={setTasks}/>
               </div>
-              <div className={`screen ${tab === "notes" ? "" : "hidden"}`}>
-                <NotesScreen onImport={handleImportPlan} bgPlan={bgPlan} setBgPlan={setBgPlan}/>
+              <div className={`screen ${tab === "planner" ? "" : "hidden"}`}>
+                <PlannerScreen onImport={handleImportPlan} bgPlan={bgPlan} setBgPlan={setBgPlan}/>
               </div>
               <div className={`screen ${tab === "settings" ? "" : "hidden"}`}>
                 <SettingsScreen/>

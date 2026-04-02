@@ -10,7 +10,7 @@ export default function BottomNav({ active, setActive, bgPlan, setChatModalOpen 
   const tabs = [
     { id: "home", Icon: Home },
     { id: "calendar", Icon: CalendarDays },
-    { id: "notes", Icon: BookMarked },
+    { id: "planner", Icon: BookMarked },
     { id: "settings", Icon: Settings },
   ];
 
