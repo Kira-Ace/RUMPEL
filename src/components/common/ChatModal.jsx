@@ -30,7 +30,7 @@ export default function ChatModal({ isOpen, onClose }) {
     setLoading(true);
 
     try {
-      const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+      const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
       if (!apiKey) {
         setMessages((prev) => [
           ...prev,
@@ -40,47 +40,49 @@ export default function ChatModal({ isOpen, onClose }) {
         return;
       }
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      const url = "https://router.huggingface.co/v1/chat/completions";
 
-      // Build conversation history
-      const contents = messages.map((msg) => ({
-        role: msg.role === "user" ? "user" : "model",
-        parts: [{ text: msg.text }],
-      }));
-      
-      // Add current user message
-      contents.push({
-        role: "user",
-        parts: [{ text: userMessage }],
-      });
+      // Build conversation history (OpenAI-compatible format)
+      const chatMessages = [
+        ...messages.map((msg) => ({
+          role: msg.role,
+          content: msg.text,
+          VITE_GOOGLE_API_KEY=AIzaSyABZpfBDr4uKCqAwCddDc3TOTnzyfm6m64      })),
+        {
+          role: "user",
+          content: userMessage,
+        },
+      ];
 
       const payload = {
-        contents,
-        generationConfig: {
-          maxOutputTokens: 500,
-          temperature: 0.8,
-        },
+        model: "moonshotai/Kimi-K2-Instruct-0905",
+        messages: chatMessages,
+        max_tokens: 500,
+        temperature: 0.8,
       };
 
       const res = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.error?.message || "API request failed");
+        throw new Error(error.error?.[0]?.message || error.error || "API request failed");
       }
 
       const data = await res.json();
       const responseText =
-        data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        data.choices?.[0]?.message?.content ||
         "Hmm, didn't quite catch that! 🤔";
 
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", text: responseText },
+        { role: "assistant", content: responseText },
       ]);
     } catch (err) {
       console.error(err);
